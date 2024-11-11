@@ -42,7 +42,7 @@ def upload_file_to_bitrix(media_id, full_file_path, appinstance, storage_id):
     }
 
     upload_to_bitrix = call_method(appinstance, "disk.storage.uploadfile", payload)
-    print(upload_to_bitrix)
+    # print(upload_to_bitrix)
     os.remove(full_file_path)
 
     if "result" in upload_to_bitrix:
