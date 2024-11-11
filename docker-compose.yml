@@ -1,0 +1,40 @@
+networks:
+  traefik:
+    name: traefik
+    external: true
+
+
+services:
+  cont-center:
+    build: build
+    image: cont-center
+    container_name: cont-center
+
+    tty: true
+    stdin_open: true
+
+    command: init
+
+    privileged: true
+    restart: unless-stopped
+
+    hostname: cont-center
+    networks:
+      - traefik
+
+    volumes:
+      - ./app:/app
+      - ./config/nginx/default:/etc/nginx/sites-available/default
+
+    environment:
+      - TZ=Europe/Moscow
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cont-center.rule=Host(`cont.uley.su`)"
+      - "traefik.http.routers.cont-center.entrypoints=https"
+      - "traefik.http.routers.cont-center.tls=true"
+      - "traefik.http.routers.cont-center.tls.certresolver=letsEncrypt"
+      - "traefik.http.routers.cont-center.service=cont-center"
+      - "traefik.http.services.cont-center.loadbalancer.server.port=80"
+      - "traefik.http.routers.cont-center.middlewares=traefik-compress"
